@@ -6,10 +6,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.List;
 
 import com.ecom.model.Product;
+import com.ecom.model.UserDtls;
 import com.ecom.service.ProductService;
+import com.ecom.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
@@ -33,6 +37,20 @@ public class AdminController {
 	@Autowired
 	private ProductService productService;
 
+	@Autowired
+	private UserService userService;
+	
+	@ModelAttribute
+	public void getUserDetails(Principal p, Model m) {
+		if(p != null) {
+			String email = p.getName();
+			UserDtls userDtls = userService.getUserByEmail(email);
+			m.addAttribute("user", userDtls);
+		}
+		List<Category> allActiveCategory = categoryService.getAllActiveCategory();
+		m.addAttribute("categorys", allActiveCategory);
+	}
+	
 	@GetMapping("/")
 	public String index() {
 		return "admin/index";
@@ -63,7 +81,7 @@ public class AdminController {
 			session.setAttribute("errorMsg", "Category Name alredy exists");
 		} else {
 			Category saveCategory = categoryService.saveCategory(category);
-			if(ObjectUtils.isEmpty(saveCategory)) {
+			if(!ObjectUtils.isEmpty(saveCategory)) {
 				session.setAttribute("erroryMsg", "Not saved ! internal server error");
 			} else {
 				File saveFile = new ClassPathResource("static/img").getFile();
