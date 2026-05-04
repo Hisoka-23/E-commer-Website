@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -40,6 +42,56 @@ public class UserDtls {
     private String profileImage;
     
     private String role;
+
+	private boolean isEnable;
+
+	private  boolean accountNonLocked;
+
+	private Integer failedAttempts;
+
+	private Date lockTime;
+
+	private String resetToken;
+
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+	}
+
+	public boolean getIsAccountNonLocked() {
+		return accountNonLocked;
+	}
+
+	public void setAccountNonLocked(boolean accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
+	}
+
+	public Integer getFailedAttempts() {
+		return failedAttempts;
+	}
+
+	public void setFailedAttempts(Integer failedAttempts) {
+		this.failedAttempts = failedAttempts;
+	}
+
+	public Date getLockTime() {
+		return lockTime;
+	}
+
+	public void setLockTime(Date lockTime) {
+		this.lockTime = lockTime;
+	}
+
+	public boolean getIsEnable() {
+		return isEnable;
+	}
+
+	public void setIsEnable(boolean enable) {
+		isEnable = enable;
+	}
 
 	public String getRole() {
 		return role;
@@ -128,7 +180,5 @@ public class UserDtls {
 	public void setProfileImage(String profileImage) {
 		this.profileImage = profileImage;
 	}
-    
-    
-
+	
 }

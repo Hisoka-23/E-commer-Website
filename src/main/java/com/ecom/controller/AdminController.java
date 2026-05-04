@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.ecom.model.Product;
 import com.ecom.model.UserDtls;
+import com.ecom.service.CartService;
 import com.ecom.service.ProductService;
 import com.ecom.service.UserService;
 
@@ -39,6 +40,9 @@ public class AdminController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private CartService cartService;
 	
 	@ModelAttribute
 	public void getUserDetails(Principal p, Model m) {
@@ -46,6 +50,8 @@ public class AdminController {
 			String email = p.getName();
 			UserDtls userDtls = userService.getUserByEmail(email);
 			m.addAttribute("user", userDtls);
+			Integer countCart = cartService.getCountCart(userDtls.getId());
+			m.addAttribute("countCart", countCart);
 		}
 		List<Category> allActiveCategory = categoryService.getAllActiveCategory();
 		m.addAttribute("categorys", allActiveCategory);
@@ -71,21 +77,21 @@ public class AdminController {
 	
 	@PostMapping("/saveCategory")
 	public String saveCategory(@ModelAttribute Category category,@RequestParam("file") MultipartFile file, HttpSession session) throws IOException {
-		
-		String impageName = file != null ? file.getOriginalFilename() : "default.jpg";
-		category.setImageName(impageName);
-		
-		Boolean existCategory = categoryService.existCategory(category.getName()); 
-		
+
+		String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
+		category.setImageName(imageName);
+
+		Boolean existCategory = categoryService.existCategory(category.getName());
+
 		if(existCategory) {
-			session.setAttribute("errorMsg", "Category Name alredy exists");
+			session.setAttribute("errorMsg", "Category Name already exists");
 		} else {
 			Category saveCategory = categoryService.saveCategory(category);
-			if(!ObjectUtils.isEmpty(saveCategory)) {
+			if(ObjectUtils.isEmpty(saveCategory)) {
 				session.setAttribute("erroryMsg", "Not saved ! internal server error");
 			} else {
 				File saveFile = new ClassPathResource("static/img").getFile();
-				
+
 				Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"category_img"+File.separator+file.getOriginalFilename());
 				System.out.println(path);
 				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
@@ -132,8 +138,9 @@ public class AdminController {
 			if(!file.isEmpty()) {
 				File saveFile = new ClassPathResource("static/img").getFile();
 
-				Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"category_img"+File.separator+file.getOriginalFilename());
-				//System.out.println(path);
+				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category_img" + File.separator + file.getOriginalFilename());
+
+				System.out.println(path);
 				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 			}
 
@@ -157,11 +164,11 @@ public class AdminController {
 
 		if(!ObjectUtils.isEmpty(saveProduct)){
 			if(!image.isEmpty()) {
-				File saveFile = new ClassPathResource("static/img").getFile();
+				File saveFile = new ClassPathResource("/static/img").getFile();
 
 				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product_img" + File.separator + image.getOriginalFilename());
 
-				//System.out.println(path);
+				System.out.println(path);
 				Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 			}
 			session.setAttribute("succMsg", "Product saved successfully");
@@ -214,6 +221,26 @@ public class AdminController {
 		}
 
 		return "redirect:/admin/editProduct/" + product.getId();
+	}
+
+	@GetMapping("/users")
+	public String getAllUsers(Model m){
+		List<UserDtls> users = userService.getUsers("Role_User");
+		m.addAttribute("users", users);
+		return "/admin/users";
+	}
+
+	@GetMapping("/updateStatus")
+	public String updateUserAccountStatus(@RequestParam boolean status, @RequestParam Integer id, HttpSession session ){
+		Boolean fale = userService.updateAccountStatus(id,  status);
+
+		if(fale) {
+			session.setAttribute("succMsg", "Account updated successfully");
+		} else {
+			session.setAttribute("errorMsg", "Failed to update account");
+		}
+
+		return  "redirect:/admin/users";
 	}
 
 }

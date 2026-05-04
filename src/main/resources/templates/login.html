@@ -17,8 +17,8 @@
 				<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
 					<div class="card-header">
 						<p class="fs-4 text-center">Login</p>
-						<div th:if="${param.error}" class="alert alert-danger">
-							Invalid email & Password
+						<div th:if="${param.error}" class="alert alert-danger text-center" role="alert">
+							[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
 						</div>
 						<div th:if="${param.logout}" class="alert alert-success">
 							Logout Successfully
@@ -42,7 +42,7 @@
 					</div>
 					
 					<div class="card-footer text-center">
-						<a href="#" class="text-decoration-name">Forgot Password</a><br>
+						<a href="/forgot-password" class="text-decoration-name">Forgot Password</a><br>
 						Don't have an account ?
 						<a href="#" class="text-decoration-name">Create One</a>
 					</div>
