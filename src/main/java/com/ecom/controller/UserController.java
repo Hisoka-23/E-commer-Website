@@ -1,29 +1,32 @@
 package com.ecom.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.List;
 
-import com.ecom.model.Cart;
+import com.ecom.model.*;
 import com.ecom.service.CartService;
+import com.ecom.service.OrderService;
+import com.ecom.util.CommonUtil;
+import com.ecom.util.OrderStatus;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import com.ecom.model.Category;
-import com.ecom.model.UserDtls;
 import com.ecom.service.CategeoryService;
 import com.ecom.service.UserService;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
-	
+
+	@Autowired
+	private OrderService orderService;
+
 	@Autowired
 	private UserService userService;
 	
@@ -32,6 +35,9 @@ public class UserController {
 
 	@Autowired
 	private CartService cartService;
+
+	@Autowired
+	private CommonUtil commonUtil;
 
 	@GetMapping("/")
 	public String home() {
@@ -72,7 +78,8 @@ public class UserController {
 		m.addAttribute("carts", carts);
 
 		if(carts.size() > 0){
-			m.addAttribute("totalOrderPrice", carts.get(carts.size()-1).getTotalOrderPrice());
+			Double totalOrderPrice = carts.get(carts.size()-1).getTotalOrderPrice();
+			m.addAttribute("totalOrderPrice", totalOrderPrice);
 		}
 
 		return "user/cart";
@@ -92,8 +99,69 @@ public class UserController {
 	}
 
 	@GetMapping("/orders")
-	public String orderPage(){
+	public String orderPage(Principal p, Model m){
+		UserDtls user = getLoggedInUserDetails(p);
+		List<Cart> carts = cartService.getCartsByUser(user.getId());
+		m.addAttribute("carts", carts);
+
+		if(carts.size() > 0){
+			Double orderPrice = carts.get(carts.size()-1).getTotalOrderPrice();
+			Double totalOrderPrice = carts.get(carts.size()-1).getTotalOrderPrice()+250+100;
+			m.addAttribute("orderPrice", orderPrice);
+			m.addAttribute("totalOrderPrice", totalOrderPrice);
+		}
+
 		return "/user/order";
+	}
+
+	@PostMapping("/save-order")
+	public String saveOrder(@ModelAttribute OrderRequest request, Principal p) {
+		//System.out.println(request.toString());
+		UserDtls user = getLoggedInUserDetails(p);
+		orderService.saveOrder(user.getId(), request);
+		return "redirect:/user/success";
+	}
+
+	@GetMapping("/success")
+	public String loadSuccess(){
+
+		return "/user/success";
+	}
+
+	@GetMapping("/user-orders")
+	public String myOrder(Model m, Principal p){
+		UserDtls loggingUser =  getLoggedInUserDetails(p);
+		List<ProductOrder> orders =  orderService.getOrders(loggingUser.getId());
+		m.addAttribute("orders", orders);
+
+		return "/user/my_orders";
+	}
+
+	@GetMapping("/update-status")
+	public String UpdateOrderStatus(@RequestParam Integer id, @RequestParam Integer st, HttpSession session){
+		OrderStatus[] value = OrderStatus.values();
+		String status = null;
+
+		for(OrderStatus orderSt : value){
+			if(orderSt.getId().equals(st)){
+				status = orderSt.getName();
+			}
+		}
+
+		ProductOrder updateOrder = orderService.updateOrderStatus(id, status);
+        try {
+            commonUtil.sendMailForProductOrder(updateOrder, status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(!ObjectUtils.isEmpty(updateOrder)) {
+			session.setAttribute("succMsg", "Order updated successfully");
+		}else {
+			session.setAttribute("errorMsg", "Order update failed");
+		}
+
+		return "redirect:/user/user-orders";
 	}
 
 }

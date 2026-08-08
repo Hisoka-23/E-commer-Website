@@ -2,6 +2,7 @@ package com.ecom.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,11 +11,13 @@ import java.security.Principal;
 import java.util.List;
 
 import com.ecom.model.Product;
+import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
-import com.ecom.service.CartService;
-import com.ecom.service.ProductService;
-import com.ecom.service.UserService;
+import com.ecom.service.*;
 
+import com.ecom.util.CommonUtil;
+import com.ecom.util.OrderStatus;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
@@ -24,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.model.Category;
-import com.ecom.service.CategeoryService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -43,6 +45,12 @@ public class AdminController {
 
 	@Autowired
 	private CartService cartService;
+
+	@Autowired
+	private OrderService orderService;;
+
+	@Autowired
+	private CommonUtil commonUtil;
 	
 	@ModelAttribute
 	public void getUserDetails(Principal p, Model m) {
@@ -241,6 +249,41 @@ public class AdminController {
 		}
 
 		return  "redirect:/admin/users";
+	}
+
+	@GetMapping("/orders")
+	public String getAllOrders(Model m){
+		List<ProductOrder> allOrders = orderService.getAllOrders();
+		m.addAttribute("orders", allOrders);
+
+		return "/admin/orders";
+	}
+
+	@PostMapping("/update-order-status")
+	public String UpdateOrderStatus(@RequestParam Integer id, @RequestParam Integer st, HttpSession session){
+		OrderStatus[] value = OrderStatus.values();
+		String status = null;
+
+		for(OrderStatus orderSt : value){
+			if(orderSt.getId().equals(st)){
+				status = orderSt.getName();
+			}
+		}
+
+		ProductOrder updateOrder = orderService.updateOrderStatus(id, status);
+        try {
+            commonUtil.sendMailForProductOrder(updateOrder, status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(!ObjectUtils.isEmpty(updateOrder)){
+			session.setAttribute("succMsg", "Order updated successfully");
+		}else {
+			session.setAttribute("errorMsg", "Order update failed");
+		}
+
+		return "redirect:/admin/orders";
 	}
 
 }
