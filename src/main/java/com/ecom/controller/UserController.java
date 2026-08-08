@@ -164,4 +164,9 @@ public class UserController {
 		return "redirect:/user/user-orders";
 	}
 
+    @GetMapping("/profile")
+	public String profile(){
+		return "/user/profile";
+	}
+
 }
