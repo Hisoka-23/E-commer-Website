@@ -9,63 +9,68 @@
 <section>
 
     <div class="container mt-5 p-5">
+
+        <form action="/user/save-order" method="post">
+
         <div class="row">
+
+
 
             <div class="col-md-6 mt-3">
 
-                <form>
+
                     <div class="row mb-3">
-                        <p class="text-center fs-2">Fill Address</p>
+                        <p class="text-center fs-2">Billing Address</p>
                         <hr>
                         <div class="col-md-6 p-1">
                             <label>First Name</label>
-                            <input type="text" name="firstName" placeholder="First Name" class="form-control mt-1">
+                            <input type="text" name="firstName" required placeholder="First Name" class="form-control mt-1">
                         </div>
 
                         <div class="col-md-6 p-1">
                             <label>Last Name</label>
-                            <input type="text" name="lastName" placeholder="Last Name" class="form-control mt-1">
+                            <input type="text" name="lastName" placeholder="Last Name" required class="form-control mt-1">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6 p-1">
                             <label>Email</label>
-                            <input type="email" name="Email" placeholder="Email" class="form-control mt-1">
+                            <input type="email" name="email" placeholder="Email" required class="form-control mt-1">
                         </div>
 
                         <div class="col-md-6 p-1">
                             <label>Mobile Number</label>
-                            <input type="number" name="mobileNo" placeholder="Mobile Number" class="form-control mt-1">
+                            <input type="number" name="mobileNo" placeholder="Mobile Number" required class="form-control mt-1">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6 p-1">
                             <label>Address</label>
-                            <input type="text" name="address" placeholder="Address" class="form-control mt-1">
+                            <input type="text" name="address" placeholder="Address" required class="form-control mt-1">
                         </div>
 
                         <div class="col-md-6 p-1">
                             <label>City</label>
-                            <input type="text" name="city" placeholder="City" class="col form-control mt-1">
+                            <input type="text" name="city" placeholder="City" required class="col form-control mt-1">
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6 p-1">
                             <label>State</label>
-                            <input type="text" name="state" placeholder="state" class="form-control mt-1">
+                            <input type="text" name="state" placeholder="state" required class="form-control mt-1">
                         </div>
 
                         <div class="col-md-6 p-1">
                             <label>Pin Code</label>
-                            <input type="number" name="pincode" placeholder="pincode" class="form-control mt-1">
+                            <input type="number" name="pincode" placeholder="pincode" required class="form-control mt-1">
                         </div>
 
                     </div>
 
-                </form>
+<!--</form>-->
 
             </div>
 
@@ -78,25 +83,25 @@
                         <table class="table table-borderless">
                             <tbody>
                                 <tr>
-                                    <td>Total Price</td>
+                                    <td>Order Price</td>
                                     <td>:</td>
-                                    <td> &#8377; 74125</td>
+                                    <td> &#8377; [[${orderPrice}]]</td>
                                 </tr>
                                 <tr>
                                     <td>Delivery Fee</td>
                                     <td>:</td>
-                                    <td> &#8377; 205</td>
+                                    <td> &#8377; 250</td>
                                 </tr>
                                 <tr>
                                     <td>Tax </td>
                                     <td>:</td>
-                                    <td> &#8377; 75</td>
+                                    <td> &#8377; 100</td>
                                 </tr>
 
                                 <tr class="border-top">
-                                    <td>Total Price</td>
+                                    <td>Total Order Price</td>
                                     <td>:</td>
-                                    <td> &#8377; 741256</td>
+                                    <td> &#8377; [[${totalOrderPrice}]]</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -106,26 +111,28 @@
                 <div class="card shadow p-3 mt-2 mb-5 bg-body-tertiary rounded">
 
                     <div class="card-body">
-                        <form action="/login" method="post">
+<!--                        <form action="/login" method="post">-->
                             <div class="mb-3">
                                 <label class="form-label">Select Payment Type</label>
                                 <select class="form-control" name="paymentType">
                                     <option>--select--</option>
-                                    <option>Cash On Delivery</option>
-                                    <option>Online Payment</option>
+                                    <option value="COD">Cash On Delivery</option>
+                                    <option value="ONLINE">Online Payment</option>
                                 </select>
                             </div>
 
-                            <button type="submit" class="btn bg-primary text-while col-md-12">Place Order</button>
+                            <button  class="btn bg-primary text-while col-md-12">Place Order</button>
 
-                        </form>
+
                     </div>
 
 
 
                 </div>
             </div>
+
         </div>
+        </form>
     </div>
 
 </section>
