@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ecom.service.CategeoryService;
 import com.ecom.service.UserService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/user")
@@ -167,6 +168,11 @@ public class UserController {
     @GetMapping("/profile")
 	public String profile(){
 		return "/user/profile";
+	}
+
+	@PostMapping("/update-profile")
+	public String updateProfile(@ModelAttribute UserDtls user, @RequestParam MultipartFile img){
+		return "redirect:/user/profile";
 	}
 
 }
