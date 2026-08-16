@@ -12,6 +12,8 @@ import com.ecom.util.OrderStatus;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -39,6 +41,9 @@ public class UserController {
 
 	@Autowired
 	private CommonUtil commonUtil;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@GetMapping("/")
 	public String home() {
@@ -171,7 +176,37 @@ public class UserController {
 	}
 
 	@PostMapping("/update-profile")
-	public String updateProfile(@ModelAttribute UserDtls user, @RequestParam MultipartFile img){
+	public String updateProfile(@ModelAttribute UserDtls user, @RequestParam MultipartFile img, HttpSession  session){
+		UserDtls updateUserProfile = userService.updateUserProfile(user, img);
+
+		if(ObjectUtils.isEmpty(updateUserProfile)) {
+			session.setAttribute("errorMsg", "Profile not updated");
+		}else {
+			session.setAttribute("succMsg", "Profile updated successfully");
+		}
+
+		return "redirect:/user/profile";
+	}
+
+	@PostMapping("/change-password")
+	public String changePassword(@RequestParam String newPassword, @RequestParam String currentPassword,  Principal p,HttpSession  session){
+		UserDtls loggedInUserDetails = getLoggedInUserDetails(p);
+
+		boolean matches = passwordEncoder.matches(currentPassword, loggedInUserDetails.getPassword());
+
+		if(matches) {
+			String encodePassword = passwordEncoder.encode(newPassword);
+			loggedInUserDetails.setPassword(encodePassword);
+			UserDtls userDtls = userService.updateUser(loggedInUserDetails);
+			if (ObjectUtils.isEmpty(userDtls)){
+				session.setAttribute("errorMsg", "Password not updated Error in server");
+			}else{
+				session.setAttribute("succMsg", "Password updated successfully");
+			}
+		}else {
+			session.setAttribute("errorMsg", "Current Password incorrect");
+		}
+
 		return "redirect:/user/profile";
 	}
 
