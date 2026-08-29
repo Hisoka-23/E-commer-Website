@@ -84,8 +84,7 @@ public class HomeController {
 	
 	@GetMapping("/products")
 	public String products(Model m, @RequestParam(value = "category", defaultValue = "") String category) {
-		System.out.println("category: " + category);
-
+		//System.out.println("category: " + category);
 		List<Category> categories = categeoryService.getAllActiveCategory();
 		List<Product> products =  productService.getAllActiveProducts(category);
 
