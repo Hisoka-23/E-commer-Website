@@ -6,23 +6,52 @@
 </head>
 <body>
     <section>
-        <div class="container-fluid mt-5 p-5">
-                    <div class="card card-sh">
-                        <div class="card-header text-center">
-                            <P class="fs-4">View Product</P>
-                            <th:block th:if="${session.succMsg}">
-                                <p class="text-success fw-bold">[[${session.succMsg}]]</p>
-                                <th:block th:text="${@commonServiceImpl.removeServiceMessage()}"></th:block>
-                            </th:block>
+        <div class="container-fluid mt-1 p-3">
 
-                            <th:block th:if="${session.errorMsg}">
-                                <p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
-                                <th:block th:text="${@commonServiceImpl.removeServiceMessage()}"></th:block>
-                            </th:block>
+            <div class="row">
+                <p class="text-center fs-4 mt-2">All Products</p>
+
+                <hr>
+
+                <a href="/admin/" class="text-decoration-none"><i class="fa-solid fa-arrow-left"></i> Back</a>
+
+                <th:block th:if="${session.succMsg}">
+                    <p class="text-success fw-bold text-center">[[${session.succMsg}]]</p>
+                    <th:block th:text="${@commonServiceImpl.removeServiceMessage()}"></th:block>
+                </th:block>
+
+                <th:block th:if="${session.errorMsg}">
+                    <p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
+                    <th:block th:text="${@commonServiceImpl.removeServiceMessage()}"></th:block>
+                </th:block>
+
+                <div class="col-md-4 p-3">
+                    <form action="/admin/products" method="get">
+                        <div class="row">
+                            <div class="col-auto">
+                                <input type="text" class="form-control" name="ch" >
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary">Search</button>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <table class="table">
-                                <thead>
+                    </form>
+                </div>
+
+
+<!--                    <div class="card card-sh">-->
+<!--                            <th:block th:if="${session.succMsg}">-->
+<!--                                <p class="text-success fw-bold">[[${session.succMsg}]]</p>-->
+<!--                                <th:block th:text="${@commonServiceImpl.removeServiceMessage()}"></th:block>-->
+<!--                            </th:block>-->
+
+<!--                            <th:block th:if="${session.errorMsg}">-->
+<!--                                <p class="text-danger fw-bold">[[${session.errorMsg}]]</p>-->
+<!--                                <th:block th:text="${@commonServiceImpl.removeServiceMessage()}"></th:block>-->
+<!--                            </th:block>-->
+                        <div class="p-3 card-sh">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
                                 <tr>
                                     <th scope="col">Sl No</th>
                                     <th scope="col">Image</th>
@@ -57,6 +86,7 @@
                         </div>
                     </div>
         </div>
+<!--        </div>-->
     </section>
 </body>
 </html>

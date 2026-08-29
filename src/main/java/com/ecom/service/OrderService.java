@@ -15,4 +15,6 @@ public interface OrderService {
 
     public List<ProductOrder> getAllOrders();
 
+    public ProductOrder getOrderById(String orderId);
+
 }
