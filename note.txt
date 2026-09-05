@@ -1,0 +1,48 @@
+									Ecommerce Spring Boot Project
+
+Backend:
+-----------
+Spring Boot 3.0
+Spring Security 6.0
+
+Frontend:
+------------
+HTML, CSS, Bootstrap, Thymeleaf
+
+DataBase:		Tools:		Host:
+-------------		--------		-------
+MySQL			Sts			AWS, Heroku
+36.36
+
+
+#6 Add Category Module
+
+------------------------------------------
+increaseFailedAttempt(user);
+userService.lock(user);
+userService.unlockAccountTimeExpired(user);
+public void resetAttempt(int userId);
+
+accountNonLocked
+failedAttempt
+lockTime
+------------------------------------------------------------------------------------------------------------
+Date - 12-04-2026
+#19 Forgot password | Reset Password By email
+
+2 page -
+
+
+
+-------------------------------------------------------
+1 forgot_password.html
+2 controller - method
+3. href - in login page
+------------------------------------------------------------------------
+#20 Add to Cart Product Ecommerce Spring Boot Project| Shopping Cart Spring Project
+
+-----------------------------------------------------------------
+#21 View Cart Product Ecommerce Spring Boot Project
+
+------------------------------------------------------------------------------------------------------------------------
+#27 Update order status and view by Admin Spring Boot Project | Shopping Cart Spring Boot Project
