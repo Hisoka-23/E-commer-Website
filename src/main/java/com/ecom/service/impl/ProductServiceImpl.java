@@ -101,7 +101,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getAllActiveProducts(String category) {
         List<Product> products = null;
-
         if(ObjectUtils.isEmpty(category)){
             products = productRepository.findAll();
         } else {
@@ -117,9 +116,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> getAllActiveProductPagination(Integer pageNo, Integer pageSize) {
+    public Page<Product> getAllActiveProductPagination(Integer pageNo, Integer pageSize, String category) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Product> pageProduct = productRepository.findByIsActiveTrue(pageable);
-        return null;
+        Page<Product> pageProduct = null;
+        if(ObjectUtils.isEmpty(category)){
+            pageProduct = productRepository.findAll(pageable);
+        } else {
+            pageProduct = productRepository.findByCategory(category, pageable);
+        }
+        return pageProduct;
     }
 }
